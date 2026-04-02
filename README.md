@@ -1,27 +1,27 @@
 # Finance Tracker
 
-A full-stack Financial Tracking Application built with the MERN stack (MongoDB, Express, React, Node.js).
+A full-stack Financial Tracking Application built with the MERN stack (MongoDB, Express.js, React, Node.js). It allows users to track income and expenses, view spending summaries, filter transactions, and visualize data through charts.
 
 ---
 
-## Folder Structure
+## Project Structure
 
 ```
 finance-tracker/
 ├── backend/
 │   ├── controllers/
-│   │   ├── transactionController.js   # All transaction logic
-│   │   └── categoryController.js      # All category logic
+│   │   ├── transactionController.js
+│   │   └── categoryController.js
 │   ├── models/
-│   │   ├── Transaction.js             # Transaction schema
-│   │   └── Category.js                # Category schema
+│   │   ├── Transaction.js
+│   │   └── Category.js
 │   ├── routes/
-│   │   ├── transactionRoutes.js       # /api/transactions routes
-│   │   └── categoryRoutes.js          # /api/categories routes
+│   │   ├── transactionRoutes.js
+│   │   └── categoryRoutes.js
 │   ├── middleware/
-│   │   └── errorHandler.js            # Global error handler
-│   ├── server.js                      # App entry point
-│   ├── .env.example                   # Environment variable template
+│   │   └── errorHandler.js
+│   ├── server.js
+│   ├── .env.example
 │   └── package.json
 │
 └── frontend/
@@ -29,70 +29,73 @@ finance-tracker/
     │   └── index.html
     └── src/
         ├── components/
-        │   ├── Navbar.js              # Top navigation bar
-        │   ├── SummaryCards.js        # Income / Expense / Balance cards
-        │   ├── TransactionForm.js     # Add transaction form
-        │   ├── TransactionList.js     # List with filter controls
-        │   └── Charts.js             # Pie chart + Bar chart
+        │   ├── Navbar.js
+        │   ├── SummaryCards.js
+        │   ├── TransactionForm.js
+        │   ├── TransactionList.js
+        │   └── Charts.js
         ├── pages/
-        │   ├── Dashboard.js           # Main overview page
-        │   ├── AddTransaction.js      # Add transaction page
-        │   └── Categories.js         # Manage categories page
+        │   ├── Dashboard.js
+        │   ├── AddTransaction.js
+        │   └── Categories.js
         ├── utils/
-        │   ├── api.js                 # All Axios API calls
-        │   └── helpers.js            # formatCurrency, formatDate, etc.
-        ├── App.js                     # Routes setup
-        ├── App.css                    # All styles
-        └── index.js                  # React entry point
+        │   ├── api.js
+        │   └── helpers.js
+        ├── App.js
+        ├── App.css
+        └── index.js
 ```
 
 ---
 
-## Tech Stack & Reasoning
-
-| Layer    | Tech            | Why                                       |
-| -------- | --------------- | ----------------------------------------- |
-| Database | MongoDB         | Flexible schema, easy to iterate          |
-| ORM      | Mongoose        | Schema validation + clean query API       |
-| Backend  | Express + Node  | Minimal, fast, great for REST APIs        |
-| Frontend | React 18        | Component-based, simple with hooks        |
-| Routing  | React Router v6 | Simple client-side navigation             |
-| HTTP     | Axios           | Cleaner than fetch, easy error handling   |
-| Charts   | Chart.js        | Lightweight, easy to configure            |
-| Styling  | Plain CSS       | No extra dependencies, easy to understand |
-
----
-
-## Setup Steps
+## Setup & Run Instructions
 
 ### Prerequisites
 
-- Node.js v16+
-- MongoDB running locally (or a MongoDB Atlas URI)
+- Node.js v16 or higher
+- MongoDB installed and running locally
+- Git
 
 ### 1. Clone the repository
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/YOUR_USERNAME/finance-tracker.git
 cd finance-tracker
 ```
 
-### 2. Setup Backend
+### 2. Setup the Backend
 
 ```bash
 cd backend
 npm install
-
-# Create your .env file
 cp .env.example .env
-# Edit .env and set your MONGO_URI if needed
-
-npm run dev       # Development with nodemon
-# or
-npm start         # Production
 ```
 
-### 3. Setup Frontend
+Open `.env` and set your values:
+
+```
+PORT=5001
+MONGO_URI=mongodb://localhost:27017/finance-tracker
+```
+
+> **Note for macOS users:** Port 5000 is occupied by AirPlay. Use port 5001.
+
+Start the backend:
+
+```bash
+npm run dev
+```
+
+You should see:
+
+```
+Connected to MongoDB
+Server running on port 5001
+```
+
+### 3. Setup the Frontend
+
+Open a new terminal:
 
 ```bash
 cd frontend
@@ -100,7 +103,16 @@ npm install
 npm start
 ```
 
-The React app runs on **http://localhost:3000** and proxies API calls to **http://localhost:5001**.
+The React app will open at **http://localhost:3000**
+
+> **Note:** Make sure `frontend/src/utils/api.js` has `baseURL: "http://localhost:5001/api"` to match your backend port.
+
+### 4. Verify it works
+
+- Open **http://localhost:5001/api/health** → should return `{ "message": "Server is running" }`
+- Open **http://localhost:3000** → the dashboard should load with categories
+
+> Categories are auto-seeded on the first API call — no manual database setup needed.
 
 ---
 
@@ -110,13 +122,13 @@ The React app runs on **http://localhost:3000** and proxies API calls to **http:
 
 ```js
 {
-  amount:    Number,    // Required, must be > 0
-  type:      String,    // "income" | "expense"
-  category:  String,    // e.g. "Food", "Salary"
-  date:      Date,      // Transaction date
-  note:      String,    // Optional note
-  createdAt: Date,      // Auto-added by Mongoose
-  updatedAt: Date,      // Auto-added by Mongoose
+  amount:    Number,   // Required. Must be > 0
+  type:      String,   // Required. Enum: "income" | "expense"
+  category:  String,   // Required. E.g. "Food", "Salary"
+  date:      Date,     // Required. The date of the transaction
+  note:      String,   // Optional. A short description
+  createdAt: Date,     // Auto-generated by Mongoose
+  updatedAt: Date,     // Auto-generated by Mongoose
 }
 ```
 
@@ -124,13 +136,20 @@ The React app runs on **http://localhost:3000** and proxies API calls to **http:
 
 ```js
 {
-  name:      String,    // Unique category name
-  type:      String,    // "income" | "expense"
-  isDefault: Boolean,   // true = seeded default, false = user-created
+  name:      String,   // Required. Unique category name
+  type:      String,   // Required. Enum: "income" | "expense"
+  isDefault: Boolean,  // true = seeded by app, false = user-created
+  createdAt: Date,
+  updatedAt: Date,
 }
 ```
 
-> **Design decision**: Category name is stored as a plain string in transactions (not a reference ID). This avoids joins and keeps queries simple — appropriate for this scale.
+### Design Decisions
+
+- **Category stored as a string in transactions** — instead of a reference (`ObjectId`), the category name is stored directly. This avoids joins/populate calls and keeps queries simple. At this scale, the tradeoff is acceptable.
+- **Auto-seeding** — default categories are inserted on the first `GET /api/categories` call if the collection is empty. This means zero manual setup for anyone running the project.
+- **Flat schema** — no user authentication was added to keep the codebase focused and easy to understand. A `userId` field could be added to both schemas to support multi-user in the future.
+- **Timestamps** — Mongoose `timestamps: true` automatically handles `createdAt` and `updatedAt` on all documents.
 
 ---
 
@@ -138,45 +157,152 @@ The React app runs on **http://localhost:3000** and proxies API calls to **http:
 
 ### Transactions
 
-| Method | Endpoint                             | Description                             |
-| ------ | ------------------------------------ | --------------------------------------- |
-| GET    | `/api/transactions`                | Get all transactions (supports filters) |
-| POST   | `/api/transactions`                | Create a new transaction                |
-| DELETE | `/api/transactions/:id`            | Delete a transaction                    |
-| GET    | `/api/transactions/summary`        | Get total income, expense, balance      |
-| GET    | `/api/transactions/chart/category` | Expense totals grouped by category      |
-| GET    | `/api/transactions/chart/monthly`  | Monthly income vs expense data          |
+#### `GET /api/transactions`
 
-**Query Parameters for GET `/api/transactions`:**
+Get all transactions. Supports optional query filters.
 
-- `type` — `income` or `expense`
-- `category` — e.g. `Food`
-- `startDate` — e.g. `2024-01-01`
-- `endDate` — e.g. `2024-12-31`
+**Query Parameters:**
 
-**Example Request (POST `/api/transactions`):**
+| Param     | Type   | Example                   |
+| --------- | ------ | ------------------------- |
+| type      | string | `income` or `expense` |
+| category  | string | `Food`                  |
+| startDate | string | `2024-01-01`            |
+| endDate   | string | `2024-12-31`            |
+
+**Response:**
+
+```json
+[
+  {
+    "_id": "64abc123",
+    "amount": 5000,
+    "type": "income",
+    "category": "Salary",
+    "date": "2024-07-01T00:00:00.000Z",
+    "note": "July salary",
+    "createdAt": "2024-07-01T10:00:00.000Z"
+  }
+]
+```
+
+---
+
+#### `POST /api/transactions`
+
+Create a new transaction.
+
+**Request Body:**
 
 ```json
 {
-  "amount": 5001,
-  "type": "income",
-  "category": "Salary",
-  "date": "2024-07-01",
-  "note": "July salary"
+  "amount": 500,
+  "type": "expense",
+  "category": "Food",
+  "date": "2024-07-05",
+  "note": "Grocery shopping"
 }
+```
+
+**Response:** `201 Created`
+
+```json
+{
+  "_id": "64abc456",
+  "amount": 500,
+  "type": "expense",
+  "category": "Food",
+  "date": "2024-07-05T00:00:00.000Z",
+  "note": "Grocery shopping"
+}
+```
+
+---
+
+#### `DELETE /api/transactions/:id`
+
+Delete a transaction by ID.
+
+**Response:** `200 OK`
+
+```json
+{ "message": "Transaction deleted" }
+```
+
+---
+
+#### `GET /api/transactions/summary`
+
+Get total income, total expenses, and net balance.
+
+**Query Parameters:** `startDate`, `endDate` (optional)
+
+**Response:**
+
+```json
+{
+  "totalIncome": 50000,
+  "totalExpense": 18000,
+  "netBalance": 32000
+}
+```
+
+---
+
+#### `GET /api/transactions/chart/category`
+
+Get expense totals grouped by category (for pie chart).
+
+**Response:**
+
+```json
+[
+  { "category": "Food", "total": 8000 },
+  { "category": "Rent", "total": 15000 }
+]
+```
+
+---
+
+#### `GET /api/transactions/chart/monthly`
+
+Get monthly income vs expense breakdown (for bar chart).
+
+**Response:**
+
+```json
+[
+  { "_id": { "year": 2024, "month": 7, "type": "income" }, "total": 50000 },
+  { "_id": { "year": 2024, "month": 7, "type": "expense" }, "total": 18000 }
+]
 ```
 
 ---
 
 ### Categories
 
-| Method | Endpoint                | Description                              |
-| ------ | ----------------------- | ---------------------------------------- |
-| GET    | `/api/categories`     | Get all categories (optional `?type=`) |
-| POST   | `/api/categories`     | Create a custom category                 |
-| DELETE | `/api/categories/:id` | Delete a user-created category           |
+#### `GET /api/categories`
 
-**Example Request (POST `/api/categories`):**
+Get all categories. Optionally filter by type.
+
+**Query Parameters:** `type` → `income` or `expense`
+
+**Response:**
+
+```json
+[
+  { "_id": "64abc789", "name": "Food", "type": "expense", "isDefault": true },
+  { "_id": "64abc790", "name": "Salary", "type": "income", "isDefault": true }
+]
+```
+
+---
+
+#### `POST /api/categories`
+
+Create a custom category.
+
+**Request Body:**
 
 ```json
 {
@@ -185,45 +311,74 @@ The React app runs on **http://localhost:3000** and proxies API calls to **http:
 }
 ```
 
-> Default categories are auto-seeded on first run. Default categories cannot be deleted.
+**Response:** `201 Created`
 
----
-
-## Features
-
-- Add income and expense transactions
-- View all transactions (latest first)
-- Delete transactions
-- Filter by type, category, and date range
-- Dashboard with summary cards (total income, expenses, net balance)
-- Category-wise expense pie chart
-- Monthly income vs expense bar chart
-- Predefined categories (auto-seeded)
-- Add custom categories
-- Responsive design (mobile-friendly)
-
----
-
-## How It Works (Simple Flow)
-
-```
-User Action  →  React Component  →  Axios API Call
-                                        ↓
-                                  Express Route
-                                        ↓
-                                  Controller (business logic)
-                                        ↓
-                                  Mongoose Model (MongoDB)
-                                        ↓
-                                  JSON Response → UI Update
+```json
+{
+  "_id": "64abc999",
+  "name": "Subscriptions",
+  "type": "expense",
+  "isDefault": false
+}
 ```
 
 ---
 
-## Notes for Internship
+#### `DELETE /api/categories/:id`
 
-- **No Redux** — state is kept local with `useState` and `useEffect`. Simple and sufficient.
-- **No heavy validation libraries** — basic JS checks in controllers + Mongoose schema validation.
-- **Error handling** — all errors flow through a single middleware (`errorHandler.js`), keeping controllers clean.
-- **Aggregation** — used MongoDB `$group` aggregation for summary and chart data — more efficient than loading all records in JS.
-- **Proxy** — React's `proxy` field in `package.json` forwards `/api` requests to Express in development. No CORS issues.
+Delete a user-created category. Default categories cannot be deleted.
+
+**Response:** `200 OK`
+
+```json
+{ "message": "Category deleted" }
+```
+
+---
+
+## Tech Stack & Reasoning
+
+| Layer       | Technology                 | Reasoning                                                                                                                  |
+| ----------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Database    | MongoDB                    | Schema-flexible, easy to iterate on during development. JSON-like documents map naturally to JavaScript objects.           |
+| ODM         | Mongoose                   | Adds schema validation, type casting, and a clean query API on top of MongoDB.                                             |
+| Backend     | Express.js + Node.js       | Minimal and unopinionated. Great for building REST APIs quickly with full control over structure.                          |
+| Frontend    | React 18                   | Component-based UI. Used only `useState` and `useEffect` — no Redux or complex state management needed at this scale. |
+| Routing     | React Router v6            | Simple client-side navigation between Dashboard, Add Transaction, and Categories pages.                                    |
+| HTTP Client | Axios                      | Cleaner than `fetch` — automatic JSON parsing, better error objects, and easy base URL configuration.                   |
+| Charts      | Chart.js + react-chartjs-2 | Lightweight and easy to configure. Only the required modules are registered to keep the bundle small.                      |
+| Styling     | Plain CSS                  | No extra dependencies. Simple, readable, and easy to explain.                                                              |
+
+---
+
+## Known Limitations & Future Improvements
+
+### Current Limitations
+
+- **No authentication** — the app is single-user with no login/signup. All data is shared.
+- **No pagination** — all transactions are loaded at once. This could be slow with thousands of records.
+- **Category stored as string** — if a category is deleted, old transactions still reference its name but it won't appear in the category filter dropdown.
+- **No edit transaction** — currently only add and delete are supported, not update.
+- **Port conflict on macOS** — port 5000 is taken by AirPlay on newer Macs, requiring manual port change to 5001.
+
+### What I Would Improve With More Time
+
+- **User authentication** — add JWT-based login so each user has their own data
+- **Edit transactions** — add a PUT endpoint and an edit form in the UI
+- **Pagination** — load transactions in pages (e.g. 20 at a time) for better performance
+- **Better date filtering UX** — add quick filters like "This Month", "Last 3 Months", "This Year"
+- **Export to CSV** — allow users to download their transaction history
+- **Budget goals** — let users set monthly spending limits per category with alerts
+- **Deployment** — deploy backend on Render and frontend on Vercel with a cloud MongoDB Atlas database
+
+---
+
+## Deployment
+
+Not deployed. To run locally, follow the setup instructions above.
+
+To deploy in the future:
+
+- **Backend** → [Render](https://render.com) (free tier, Node.js support)
+- **Frontend** → [Vercel](https://vercel.com) (free tier, React support)
+- **Database** → [MongoDB Atlas](https://www.mongodb.com/atlas) (free 512MB cluster)
