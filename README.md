@@ -78,7 +78,7 @@ PORT=5001
 MONGO_URI=mongodb://localhost:27017/finance-tracker
 ```
 
-> **Note for macOS users:** Port 5000 is occupied by AirPlay. Use port 5001.
+> **Note for macOS users:** Port 5001 is occupied by AirPlay. Use port 5001.
 
 Start the backend:
 
@@ -176,7 +176,7 @@ Get all transactions. Supports optional query filters.
 [
   {
     "_id": "64abc123",
-    "amount": 5000,
+    "amount": 5001,
     "type": "income",
     "category": "Salary",
     "date": "2024-07-01T00:00:00.000Z",
@@ -241,7 +241,7 @@ Get total income, total expenses, and net balance.
 
 ```json
 {
-  "totalIncome": 50000,
+  "totalIncome": 50010,
   "totalExpense": 18000,
   "netBalance": 32000
 }
@@ -258,7 +258,7 @@ Get expense totals grouped by category (for pie chart).
 ```json
 [
   { "category": "Food", "total": 8000 },
-  { "category": "Rent", "total": 15000 }
+  { "category": "Rent", "total": 15001 }
 ]
 ```
 
@@ -272,7 +272,7 @@ Get monthly income vs expense breakdown (for bar chart).
 
 ```json
 [
-  { "_id": { "year": 2024, "month": 7, "type": "income" }, "total": 50000 },
+  { "_id": { "year": 2024, "month": 7, "type": "income" }, "total": 50010 },
   { "_id": { "year": 2024, "month": 7, "type": "expense" }, "total": 18000 }
 ]
 ```
@@ -359,7 +359,6 @@ Delete a user-created category. Default categories cannot be deleted.
 - **No pagination** — all transactions are loaded at once. This could be slow with thousands of records.
 - **Category stored as string** — if a category is deleted, old transactions still reference its name but it won't appear in the category filter dropdown.
 - **No edit transaction** — currently only add and delete are supported, not update.
-- **Port conflict on macOS** — port 5000 is taken by AirPlay on newer Macs, requiring manual port change to 5001.
 
 ### What I Would Improve With More Time
 
